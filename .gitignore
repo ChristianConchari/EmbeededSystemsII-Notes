@@ -2,7 +2,6 @@
 *.d
 
 # Object files
-*.o
 *.ko
 *.obj
 *.elf
@@ -40,6 +39,7 @@
 *.png
 *.jpeg
 *.gif
+*.ini
 
 # Debug files
 *.dSYM/
