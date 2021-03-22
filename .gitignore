@@ -35,6 +35,11 @@
 *.i*86
 *.x86_64
 *.hex
+*.bin
+*.jpg
+*.png
+*.jpeg
+*.gif
 
 # Debug files
 *.dSYM/
@@ -50,3 +55,29 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Non required directores
+/tiva/boot_loader
+/tiva/docs
+/tiva/grlib
+/tiva/inc
+/tiva/third_party
+/tiva/tools
+/tiva/usblib
+/tiva/utils
+/tiva/windows_drivers
+/tiva/sensorlib
+/tiva/driverlib
+/tiva/examples/peripherals
+/tiva/examples/project
+/tiva/examples/boards/ek-tm4c123gxl
+/tiva/examples/boards/ek-tm4c123gxl-boostxl-kentec-s1
+/tiva/examples/boards/ek-tm4c123gxl-boostxl-senshub
+/tiva/examples/boards/ek-tm4c1294xl-boostxl-kentec-s1
+/tiva/examples/boards/ek-tm4c1294xl-boostxl-senshub
+/tiva/examples/boards/ek-tm4c129exl
+/tiva/examples/boards/dk-tm4c129x
+/tiva/examples/boards/dk-tm4c129x-boostxl-senshub
+*.json
+*.html
+*.txt
