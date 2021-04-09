@@ -348,9 +348,7 @@ KeyboardHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgData,
             //
             // Set the LED to match the current state of the caps lock LED.
             //
-            MAP_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0,
-                             (ui32MsgData & HID_KEYB_CAPS_LOCK) ? GPIO_PIN_0 :
-                             0);
+            MAP_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, (ui32MsgData & HID_KEYB_CAPS_LOCK) ? GPIO_PIN_0 :0);
 
             break;
         }
@@ -407,8 +405,7 @@ WaitForSendIdle(uint_fast32_t ui32TimeoutTicks)
         // should be safe across a wrap of g_ui32SysTickCount.
         //
         ui32Now = g_ui32SysTickCount;
-        ui32Elapsed = ((ui32Start < ui32Now) ? (ui32Now - ui32Start) :
-                     (((uint32_t)0xFFFFFFFF - ui32Start) + ui32Now + 1));
+        ui32Elapsed = ((ui32Start < ui32Now) ? (ui32Now - ui32Start) : (((uint32_t)0xFFFFFFFF - ui32Start) + ui32Now + 1));
     }
 
     //
@@ -462,7 +459,7 @@ SendString(char *pcStr)
         }
         else
         {
-            //
+        //
         // Convert the character into an index into the keyboard usage code
         // table.
         //
@@ -473,10 +470,7 @@ SendString(char *pcStr)
         // Send the key press message.
         //
         g_eKeyboardState = STATE_SENDING;
-        if(USBDHIDKeyboardKeyStateChange((void *)&g_sKeyboardDevice,
-                                         g_ppi8KeyUsageCodes[ui32Char][0],
-                                         g_ppi8KeyUsageCodes[ui32Char][1],
-                                         true) != KEYB_SUCCESS)
+        if(USBDHIDKeyboardKeyStateChange((void *)&g_sKeyboardDevice, g_ppi8KeyUsageCodes[ui32Char][0], g_ppi8KeyUsageCodes[ui32Char][1], true) != KEYB_SUCCESS)
         {
             return;
         }
@@ -494,9 +488,7 @@ SendString(char *pcStr)
         // Send the key release message.
         //
         g_eKeyboardState = STATE_SENDING;
-        if(USBDHIDKeyboardKeyStateChange((void *)&g_sKeyboardDevice,
-                                         0, g_ppi8KeyUsageCodes[ui32Char][1],
-                                         false) != KEYB_SUCCESS)
+        if(USBDHIDKeyboardKeyStateChange((void *)&g_sKeyboardDevice, 0, g_ppi8KeyUsageCodes[ui32Char][1], false) != KEYB_SUCCESS)
         {
             return;
         }
@@ -530,6 +522,12 @@ SysTickIntHandler(void)
 // This is the main loop that runs the application.
 //
 //*****************************************************************************
+
+
+uint8_t counter1B = 0;
+uint8_t counter2B = 0;
+uint8_t prime = 2;
+
 int
 main(void)
 {
@@ -543,10 +541,7 @@ main(void)
     // Note: SYSCTL_CFG_VCO_240 is a new setting provided in TivaWare 2.2.x and
     // later to better reflect the actual VCO speed due to SYSCTL#22.
     //
-    ui32SysClock = MAP_SysCtlClockFreqSet((SYSCTL_XTAL_25MHZ |
-                                           SYSCTL_OSC_MAIN |
-                                           SYSCTL_USE_PLL |
-                                           SYSCTL_CFG_VCO_240), 120000000);
+    ui32SysClock = MAP_SysCtlClockFreqSet((SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_240), 120000000);
 
     //
     // Configure the device pins for this board.
@@ -681,8 +676,7 @@ main(void)
             // See if the button was just pressed.
             //
             ui8Buttons = ButtonsPoll(&ui8ButtonsChanged, 0);
-            if(BUTTON_PRESSED(LEFT_BUTTON, ui8Buttons,
-                ui8ButtonsChanged))
+            if(BUTTON_PRESSED(LEFT_BUTTON, ui8Buttons, ui8ButtonsChanged))
             {
                 //
                 // If the bus is suspended then resume it.  Otherwise, type
@@ -690,13 +684,19 @@ main(void)
                 //
                 if(g_bSuspended)
                 {
-                    USBDHIDKeyboardRemoteWakeupRequest(
-                                                   (void *)&g_sKeyboardDevice);
+                    USBDHIDKeyboardRemoteWakeupRequest((void *)&g_sKeyboardDevice);
                 }
                 else
                 {
-                    SendString("You have pressed the SW1 button.\n"
-                               "Try pressing the SW2 button.\n\n");
+                    counter1B++;
+                    if(counter1B > 9){
+                        SendString("Límite máximo alcanzado \n");    
+                        counter1B = 0;
+                    }else{
+                        char number[5];
+                        SendString(itoa(counter1B, number, 10));
+                        SendString("  \n");
+                    }
                 }
             }
             else if(BUTTON_PRESSED(RIGHT_BUTTON, ui8Buttons,
@@ -713,9 +713,20 @@ main(void)
                 }
                 else
                 {
-                    SendString("You have pressed the SW2 button.\n"
-                               "Try pressing the Caps Lock key on your "
-                               "keyboard and then press either button.\n\n");
+                    char number[5];
+                    SendString(' ');
+                    while (!isprime(prime))
+                    {
+                        prime++;
+                    }
+                    if(prime > 99){
+                        SendString("Límite máximo alcanzado \n");
+                        prime = 2;
+                    }else{
+                        SendString(itoa(prime, number, 10));
+                        SendString("  \n");
+                        prime++;
+                    }
                 }
             }
 
